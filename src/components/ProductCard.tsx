@@ -1,8 +1,9 @@
-import { useState, ReactElement } from 'react'
-import { useMutation } from '@apollo/client'
+import { useContext, useState, ReactElement } from "react"
+import { useMutation } from "@apollo/client"
 
-import { ADD_ITEM_TO_ORDER } from '../graphql/mutations'
-import { getFormatPriceNumber } from '../helpers'
+import { ADD_ITEM_TO_ORDER } from "../graphql/mutations"
+import { getFormatPriceNumber } from "../helpers"
+import { MainContext } from "../MainContext"
 
 import {
   Card,
@@ -13,7 +14,7 @@ import {
   CardImage,
   CardName,
   CardPrice,
-} from '../styles/Card'
+} from "../styles/Card"
 
 interface ProductCardProps {
   assets: any
@@ -28,6 +29,7 @@ const ProductCard = ({
   name,
   variants,
 }: ProductCardProps): ReactElement => {
+  const { setOrder } = useContext(MainContext)
   const [addItemToOrderMutation] = useMutation(ADD_ITEM_TO_ORDER)
   const [isLoading, setIsLoading] = useState(false)
   const price = variants[0].price
@@ -35,7 +37,7 @@ const ProductCard = ({
 
   const priceProduct = `$${getFormatPriceNumber(price)}`
 
-  const handleBuyClick = async (id) => {
+  const handleBuyClick = async (id: number) => {
     setIsLoading(true)
     await addItemToOrderMutation({
       variables: {
@@ -45,7 +47,8 @@ const ProductCard = ({
     })
       .then((response) => {
         setIsLoading(false)
-        console.log('ADD_ITEM_TO_ORDER response: ', response)
+        setOrder(response.data.addItemToOrder.total)
+        console.log("ADD_ITEM_TO_ORDER response: ", response)
       })
       .catch((error) => {
         setIsLoading(false)

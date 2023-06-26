@@ -1,22 +1,25 @@
-import { useEffect, useState } from 'react'
+import { useContext, useEffect } from 'react'
 import { useQuery } from '@apollo/client'
 
 import { GET_ORDER_SUBTOTAL } from '../graphql/queries'
 import { getFormatPriceNumber } from '../helpers'
+import useStateWithStorage from '../hooks/useStateWithStorage'
 import { HeaderSubTotal } from '../styles/Header'
+import { MainContext } from '../MainContext'
 
 export function Header() {
+  const [state, setState] = useStateWithStorage('subtotal', 0)
+  const { order } = useContext(MainContext)
   const { loading, error, data } = useQuery(GET_ORDER_SUBTOTAL)
-  const [subTotal, setSubtotal] = useState(0)
 
   useEffect(() => {
     if (!data?.activeOrder || data?.activeOrder === null) {
-      setSubtotal(0)
+      setState(order)
     } else {
       const { total } = data.activeOrder
-      setSubtotal(total)
+      setState(total)
     }
-  }, [data])
+  }, [data, order, setState])
 
   if (loading) {
     return <p>Loading...</p>
@@ -33,7 +36,7 @@ export function Header() {
         alt="logo"
       />
       <HeaderSubTotal>
-        <h4>Subtotal: ${getFormatPriceNumber(subTotal)}</h4>
+        <h4>Subtotal: ${getFormatPriceNumber(state)}</h4>
       </HeaderSubTotal>
     </header>
   )

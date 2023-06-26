@@ -8,7 +8,7 @@ import { MainContext } from './MainContext'
 
 function App() {
   const { loading, error, data } = useQuery(GET_PRODUCTS)
-  const [order, setOrder] = useState('')
+  const [order, setOrder] = useState(0)
   const [products, setItems] = useState([])
 
   useEffect(() => {

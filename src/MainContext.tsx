@@ -1,8 +1,8 @@
-import { createContext } from 'react'
+import { createContext } from "react"
 
 interface Context {
-  order: string
-  setOrder: (newOrder: string) => void
+  order: number
+  setOrder: (newOrder: number) => void
 }
 
 export const MainContext = createContext<Context | null>(null)
